@@ -1,0 +1,7 @@
+comtypes==1.1.10
+Pillow==9.5.0
+pynput==1.7.6
+PyQt5==5.15.9
+pywin32==305
+PyYAML==6.0
+win32gui==221.6
