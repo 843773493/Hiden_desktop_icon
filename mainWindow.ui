@@ -16,71 +16,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QGridLayout" name="gridLayout" rowstretch="1,1">
-      <item row="0" column="0">
-       <widget class="QGroupBox" name="groupBox">
-        <property name="title">
-         <string>命令区域</string>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_2">
-         <item row="4" column="0">
-          <widget class="QLabel" name="label">
-           <property name="frameShape">
-            <enum>QFrame::Box</enum>
-           </property>
-           <property name="text">
-            <string>间隔设置/s</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QLineEdit" name="Edit_time_interval">
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="2">
-          <widget class="QPushButton" name="bugtton_config_set">
-           <property name="text">
-            <string>确定</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0" colspan="3">
-          <widget class="QPushButton" name="button_start_close">
-           <property name="text">
-            <string>开始/关闭</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0" colspan="3">
-          <widget class="QCheckBox" name="button_hide_taskbar">
-           <property name="text">
-            <string>隐藏任务栏</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0" colspan="3">
-          <widget class="QCheckBox" name="button_hide_desk_icon">
-           <property name="text">
-            <string>隐藏桌面图标</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0" colspan="2">
-          <widget class="QCheckBox" name="button_hide_cursor">
-           <property name="text">
-            <string>隐藏鼠标</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
+     <layout class="QGridLayout" name="gridLayout" rowstretch="1,0">
       <item row="1" column="0">
        <widget class="QGroupBox" name="groupBox_2">
         <property name="title">
@@ -107,7 +43,7 @@
                </font>
               </property>
               <property name="text">
-               <string> </string>
+               <string/>
               </property>
              </widget>
             </item>
@@ -197,18 +133,89 @@
             <item row="0" column="1">
              <widget class="QLabel" name="label_view_interactive_information">
               <property name="text">
-               <string> </string>
+               <string/>
               </property>
              </widget>
             </item>
             <item row="1" column="0" colspan="2">
              <widget class="QLabel" name="label_6">
               <property name="text">
-               <string>图片</string>
+               <string/>
               </property>
              </widget>
             </item>
            </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>命令区域</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="2" column="0" colspan="2">
+          <widget class="QCheckBox" name="button_hide_desk_icon">
+           <property name="text">
+            <string>隐藏桌面图标</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QLineEdit" name="Edit_time_interval">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="2">
+          <widget class="QPushButton" name="bugtton_config_set">
+           <property name="text">
+            <string>确定</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="label">
+           <property name="frameShape">
+            <enum>QFrame::Box</enum>
+           </property>
+           <property name="text">
+            <string>间隔设置/s</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="2">
+          <widget class="QPushButton" name="button_start_close">
+           <property name="text">
+            <string>开始/关闭</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="2">
+          <widget class="QCheckBox" name="button_hide_taskbar">
+           <property name="text">
+            <string>隐藏任务栏</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QCheckBox" name="button_hide_cursor">
+           <property name="text">
+            <string>隐藏鼠标</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QCheckBox" name="button_hide_windows">
+           <property name="text">
+            <string>隐藏桌面窗口</string>
+           </property>
           </widget>
          </item>
         </layout>
