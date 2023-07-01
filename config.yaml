@@ -2,5 +2,10 @@
 隐藏任务栏: True
 隐藏桌面图标: True
 隐藏鼠标: True
+隐藏桌面窗口: True
 时间间隔: 10
 显示界面: True
+不需要判断最小化的窗口の名称:
+  - Microsoft Text Input Application
+  - Program Manager
+  - NVIDIA GeForce Overlay
