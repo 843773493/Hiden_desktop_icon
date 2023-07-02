@@ -1,5 +1,5 @@
 Function
-1. Hiden desktop icon and taskbar and cursor of windows  (after not moving the mouse or keyboard for a while )
+1. Hiden desktop icon and taskbar and cursor and openning windows of windows  (after not moving the mouse or keyboard for a while )
 
 Addition
 
