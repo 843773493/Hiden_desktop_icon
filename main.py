@@ -31,7 +31,7 @@ class userWindow(QMainWindow):     #交互界面
         uic.loadUi("mainWindow.ui", self)   #加载ui文件
                 # 创建托盘图标
         self.tray_icon = QSystemTrayIcon(self)
-        self.tray_icon.setIcon(QIcon("1.ico"))
+        self.tray_icon.setIcon(QIcon("./1.ico"))
 
         # 创建托盘菜单
         tray_menu = QMenu()
@@ -60,7 +60,7 @@ class userWindow(QMainWindow):     #交互界面
         self.load_config()
               
     def load_config(self):
-        with open('config.yaml', 'r', encoding='utf-8') as f:
+        with open('./config.yaml', 'r', encoding='utf-8') as f:
             config = yaml.load(f, Loader=yaml.FullLoader)
             
             self.button_hide_taskbar.setChecked(config['隐藏任务栏'])
@@ -256,7 +256,7 @@ class windowsControler():    #自定义windows的底层实现, (bug生成器)
         
         self.__hwnd_taskbar = win32gui.FindWindow("Shell_TrayWnd",None)    #桌面任务栏的句柄,用spy++找到的,win11是Microsoft:Taskband:SearchBox似乎
         
-        self.__tool_hwnd_iconbar = cdll.LoadLibrary("find_deskTopIconBar.dll")
+        self.__tool_hwnd_iconbar = cdll.LoadLibrary("./find_deskTopIconBar.dll")
         self.__hwnd_iconbar = self.__tool_hwnd_iconbar.GetDesktopListViewHWND()
         
         self.__hwnd_cursorhider = None   #这玩意不能提前创建,否则会出现无法隐藏鼠标
