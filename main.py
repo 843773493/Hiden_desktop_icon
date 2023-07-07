@@ -9,7 +9,8 @@ from pynput import keyboard,mouse
 import sys
 import yaml
 from ctypes import cdll
-
+import logging
+import datetime
 
 class userWindowAboutDialog(QDialog):
     def __init__(self, parent=None):
@@ -26,7 +27,9 @@ class userWindowAboutDialog(QDialog):
 class userWindow(QMainWindow):     #交互界面
     def __init__(self, *args, **kwargs):
         super(userWindow, self).__init__()
-        self.hider = Hider()  # 中间控制器
+        self.logger = Logger()   # 自定保存错误信息到error.log文件中
+
+        self.hider = Hider(self.logger)  # 中间控制器
         
         uic.loadUi("mainWindow.ui", self)   #加载ui文件
                 # 创建托盘图标
@@ -77,7 +80,7 @@ class userWindow(QMainWindow):     #交互界面
             
             self.hider.threadings['talk_1_addition_enum_windows_callback'] = config['不需要判断最小化的窗口の名称']
             self.hider.threadings['talk_1_addition_ignore_windows_Set'](config['不需要判断最小化的窗口の名称'])
-            print('aaaa',self.hider.threadings['talk_1_addition_enum_windows_callback'])
+            #print('aaaa',self.hider.threadings['talk_1_addition_enum_windows_callback'])
             if config['运行/停止程序']:
                 self.swith_start_close()
                 
@@ -124,10 +127,12 @@ class userWindow(QMainWindow):     #交互界面
         dialog.exec_()
         
 class Hider():     #交互界面与底层实现的中间层，(bug管理器)
-    def __init__(self):
+    def __init__(self, logger):
         #内部变量
+        self.__logger = logger
+
         self.__windows_controler = windowsControler()
-        self.__threadings = {'talk_1':None,'talk_1_time_last':time.time(),'talk_1_threading_lock':threading.Lock(),'talk_1_hide_condition':[]}
+        self.__threadings = {'talk_1':None,'talk_1_time_last':time.time(),'talk_1_threading_lock':threading.Lock(),'talk_1_hide_condition':[],'talk_1_first_check2hide':True}
                 
         #接口
         self.threading_states = {'if_talk_1_start':False}
@@ -136,8 +141,6 @@ class Hider():     #交互界面与底层实现的中间层，(bug管理器)
         self.config_param = {'WAITING_TIME':10}
         self.control_param = {'hide_taskbar':False,'hide_iconbar':False,'hide_cursor':False,'hide_windows':False,'Keep_displaying':False}   
              
-
-
     def test(self):
         self.__windows_controler.hide_cursor()
         time.sleep(2)
@@ -173,7 +176,7 @@ class Hider():     #交互界面与底层实现的中间层，(bug管理器)
     def __talk_1_addition_check_hide_condition(self):   #检查是否满足隐藏条件
         self.__threadings['talk_1_hide_condition'] = []   #清空上次的隐藏检查
         win32gui.EnumWindows( lambda hwnd, extra: self.__talk_1_addition_enum_windows_callback(hwnd, extra), self.__threadings['talk_1_hide_condition'])
-
+        #print('----------------',self.__threadings['talk_1_hide_condition'])
         check_result = all(d["minimized"] for d in self.__threadings['talk_1_hide_condition'])  #当且仅当所有窗口都最小化时，才返回True
         print('检查结果：',check_result,'不执行任何动作')
         return check_result
@@ -194,6 +197,17 @@ class Hider():     #交互界面与底层实现的中间层，(bug管理器)
         
         while self.threading_states['if_talk_1_start']:   #self.threading_states['if_talk_1_start'] 被外部改为False时，就会正常退出此线程
             if time.time()-self.__threadings['talk_1_time_last'] >= self.config_param['WAITING_TIME']: 
+                
+                if self.__threadings['talk_1_first_check2hide']:
+                    self.__threadings['talk_1_first_check2hide'] = False
+                    self.__logger.logger_debug.debug('即将进行的操作,隐藏窗口:{},是否满足桌面窗口都最小化(如果没有则不执行前面的步骤):{},隐藏鼠标:{},隐藏任务栏:{},隐藏图标栏:{},\n     当前windows状态{}'.format(
+                        self.control_param['hide_windows'],
+                        self.__talk_1_addition_check_hide_condition(),
+                        self.control_param['hide_cursor'] and not self.__windows_controler.windows_states['if_cursor_hidden'],
+                        self.control_param['hide_taskbar'] and not self.__windows_controler.windows_states['if_taskbar_hidden'],
+                        self.control_param['hide_iconbar'] and not self.__windows_controler.windows_states['if_iconbar_hidden'],                                                                                                              
+                        str(self.__windows_controler.windows_states)))
+                    
                 if self.control_param['hide_windows']:
                     #控制参数为True，且windows状态为未隐藏
                     if self.control_param['hide_cursor'] and not self.__windows_controler.windows_states['if_cursor_hidden']:
@@ -209,7 +223,7 @@ class Hider():     #交互界面与底层实现的中间层，(bug管理器)
                         print('隐藏窗口')
                         self.__windows_controler.hide_windows()   #隐藏窗口
                     self.__windows_controler.updata_windows_states()   #更新windows状态
-                   
+
                 elif self.__talk_1_addition_check_hide_condition():     
                     #控制参数为True，且windows状态为未隐藏
                     if self.control_param['hide_cursor'] and not self.__windows_controler.windows_states['if_cursor_hidden']:
@@ -227,6 +241,7 @@ class Hider():     #交互界面与底层实现的中间层，(bug管理器)
                         self.control_param['hide_taskbar'],not self.__windows_controler.windows_states['if_taskbar_hidden'],
                         self.control_param['hide_iconbar'],not self.__windows_controler.windows_states['if_iconbar_hidden'])
             if time.time()-self.__threadings['talk_1_time_last'] < self.config_param['WAITING_TIME']:   #一动鼠标键盘且屏幕是隐藏图标状态就显示图标
+                self.__threadings['talk_1_first_check2hide'] = True
                 
                 if self.__windows_controler.windows_states['if_cursor_hidden']:
                     print('显示鼠标')
@@ -340,6 +355,7 @@ class windowsControler():    #自定义windows的底层实现, (bug生成器)
         # 记录未最小化的窗口
         self._hwnd_windows_dict['unminimized_windows'] = [window for window in self._hwnd_windows_dict['windows_exist'] if not window['minimized']]
         # 最小化未最小化的窗口
+        #print(self._hwnd_windows_dict['unminimized_windows'])
         for window in self._hwnd_windows_dict['unminimized_windows']:
             win32gui.ShowWindow(window['hwnd'], win32con.SW_MINIMIZE)
 
@@ -348,6 +364,55 @@ class windowsControler():    #自定义windows的底层实现, (bug生成器)
         for window in reversed(self._hwnd_windows_dict['unminimized_windows']):  #! 按顺序还原窗口，不确定是否正确
             win32gui.SetWindowPlacement(window['hwnd'], window['placement'])
         self._hwnd_windows_dict['unminimized_windows'] = []  #清理缓存
+
+class Logger():
+    class TeeStream:
+        def __init__(self, stream1, stream2):
+            self.stream1 = stream1
+            self.stream2 = stream2
+
+        def write(self, data):
+            self.stream1.write(data)
+            self.stream2.write(data)
+
+        def flush(self):
+            self.stream1.flush()
+            self.stream2.flush()
+
+    def __init__(self):
+        # 获取当前日期
+        current_date = datetime.datetime.now().strftime('%Y-%m-%d')
+
+        # 调整日志文件名为带有当前日期的形式
+        log_file_debug = f'./log/debug_{current_date}.log'
+        log_file_error = f'./log/error_{current_date}.log'
+        
+        # 创建 logger 对象
+        self.logger_debug = logging.getLogger('mylogger_debug')
+        self.logger_error = logging.getLogger('mylogger_error')
+        
+        # 设置 日志 级别
+        self.logger_debug.setLevel(logging.DEBUG)
+        self.logger_error.setLevel(logging.ERROR)
+        
+        # 创建一个输出到文件的 handler
+        self.file_handler_debug = logging.FileHandler(log_file_debug)
+        self.file_handler_debug.setLevel(logging.DEBUG)
+        self.file_handler_error = logging.FileHandler(log_file_error)
+        self.file_handler_error.setLevel(logging.ERROR)
+
+        # 设置输出格式
+        formatter_error = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s - %(args)s')
+        self.file_handler_error.setFormatter(formatter_error)
+        formatter_debug = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s - %(args)s')
+        self.file_handler_debug.setFormatter(formatter_debug)
+
+        # 将 handler 添加到 logger 对象中
+        self.logger_debug.addHandler(self.file_handler_debug)
+        self.logger_error.addHandler(self.file_handler_error)
+
+        # 重定向标准错误流
+        sys.stderr = Logger.TeeStream(sys.stderr, self.file_handler_error.stream)
 
 if __name__ == "__main__":
     
