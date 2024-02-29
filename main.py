@@ -301,8 +301,6 @@ class windowsControler():    #自定义windows的底层实现, (bug生成器)
         self.windows_states['if_iconbar_hidden'] = not win32gui.IsWindowVisible(self.__hwnd_iconbar)   #IsWindowVisible，如果窗口可见返回True，否则返回False
         self.windows_states['if_cursor_hidden'] = bool(win32gui.IsWindow(self.__hwnd_cursorhider))  #注意这个是反的,如果窗口存在，则鼠标被隐藏（因该吧）
         self.windows_states['if_windows_hidden'] = bool(len(self.__tool_hide_windows_get_unhide_windows()) == 0)   #如果有未最小化的窗口存在，则为False                    
-        if  self.windows_states['if_taskbar_hidden']==True:
-            print(self.__tool_hide_windows_get_unhide_windows())
                                       
     def hide_cursor(self):
         self.__hwnd_cursorhider = win32gui.CreateWindowEx(win32con.WS_EX_TOPMOST | win32con.WS_EX_TOOLWINDOW,
