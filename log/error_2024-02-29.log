@@ -1,0 +1,11 @@
+Exception in thread Thread-1:
+Traceback (most recent call last):
+  File "F:\software\Anaconda3\lib\threading.py", line 973, in _bootstrap_inner
+    self.run()
+  File "F:\software\Anaconda3\lib\threading.py", line 910, in run
+    self._target(*self._args, **self._kwargs)
+  File "d:\study\C盘文件备份\python_code\小工具\调节桌面透明度\重制版_github\Hiden_desktop_icon\main.py", line 259, in __talk_1
+    self.__windows_controler.updata_windows_states()   #更新windows状态
+  File "d:\study\C盘文件备份\python_code\小工具\调节桌面透明度\重制版_github\Hiden_desktop_icon\main.py", line 285, in updata_windows_states
+    self.windows_states['if_windows_hidden'] = bool(len(self._hwnd_windows_dict['unminimized_windows']) >= 1)   #如果有窗口存在，则为True                        
+KeyError: 'unminimized_windows'

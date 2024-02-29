@@ -132,12 +132,17 @@ class Hider():     #交互界面与底层实现的中间层，(bug管理器)
         self.__logger = logger
 
         self.__windows_controler = windowsControler()
-        self.__threadings = {'talk_1':None,'talk_1_time_last':time.time(),'talk_1_threading_lock':threading.Lock(),'talk_1_hide_condition':[],'talk_1_first_check2hide':True}
+        self.__threadings = {'talk_1':None,
+                             'talk_1_time_last':time.time(),  #精度不高的计时器
+                             'talk_1_threading_lock':threading.Lock(),  #防止多线程同时修改
+                             'talk_1_hide_condition':[],  # 用来记录桌面是否有最小化窗口然后控制是否隐藏
+                             'talk_1_first_check2hide':True,    #用来控制log的频率，只有第一次检查到需要隐藏时才会输出log
+                             'talk_1_state':'checking'} #checking, hiding, unhiding #隐藏窗口时会模拟按键，此时暂停检测
                 
         #接口
         self.threading_states = {'if_talk_1_start':False}
-        self.threadings = {'talk_1_addition_enum_windows_callback':[],
-                           'talk_1_addition_ignore_windows_Set':lambda y: self.__windows_controler._hwnd_windows_dict.update({'ignored_windows': y})}
+        self.threadings = {'talk_1_addition_enum_windows_callback':[],  #用来存储不需要判断最小化的窗口，hider用，和controler用一样
+                           'talk_1_addition_ignore_windows_Set':lambda y: self.__windows_controler._hwnd_windows_dict.update({'ignored_windows': y}),} #用来存储不需要判断最小化的窗口，controler用
         self.config_param = {'WAITING_TIME':10}
         self.control_param = {'hide_taskbar':False,'hide_iconbar':False,'hide_cursor':False,'hide_windows':False,'Keep_displaying':False}   
              
@@ -157,10 +162,11 @@ class Hider():     #交互界面与底层实现的中间层，(bug管理器)
         self.__threadings['talk_1'].join()   #等待线程结束,防止乱按按钮导致的线程混乱
                     
     def __talk_1_addition_reset_time(self,*args, **kwargs):   #重置线程1的计时器
-        with self.__threadings['talk_1_threading_lock']:   #防止多线程同时修改
-            self.__threadings['talk_1_time_last'] = time.time()
+        if self.__threadings['talk_1_state'] != 'unhiding': #如果正在unhiding就不重置计时器
+            with self.__threadings['talk_1_threading_lock']:   #防止多线程同时修改
+                self.__threadings['talk_1_time_last'] = time.time()
       
-    def __talk_1_addition_enum_windows_callback(self,hwnd, extra):
+    def __talk_1_addition_enum_windows_callback(self,hwnd, extra):  #hider重复写的控制检测函数防止和controler耦合过高
         # 获取窗口标题 title
         window_text = win32gui.GetWindowText(hwnd)
         # 判断窗口是否可见
@@ -197,6 +203,7 @@ class Hider():     #交互界面与底层实现的中间层，(bug管理器)
         
         while self.threading_states['if_talk_1_start']:   #self.threading_states['if_talk_1_start'] 被外部改为False时，就会正常退出此线程
             if time.time()-self.__threadings['talk_1_time_last'] >= self.config_param['WAITING_TIME']: 
+                self.__threadings['talk_1_state'] = 'unhiding'
                 
                 if self.__threadings['talk_1_first_check2hide']:
                     self.__threadings['talk_1_first_check2hide'] = False
@@ -219,12 +226,12 @@ class Hider():     #交互界面与底层实现的中间层，(bug管理器)
                     if self.control_param['hide_iconbar'] and not self.__windows_controler.windows_states['if_iconbar_hidden']:
                         print('隐藏桌面图标')
                         self.__windows_controler.hide_iconbar()   #隐藏桌面图标      
-                    if  self.control_param['hide_windows']:   
+                    if  self.control_param['hide_windows'] and not self.__windows_controler.windows_states['if_windows_hidden']:   
                         print('隐藏窗口')
                         self.__windows_controler.hide_windows()   #隐藏窗口
                     self.__windows_controler.updata_windows_states()   #更新windows状态
 
-                elif self.__talk_1_addition_check_hide_condition():     
+                elif self.__talk_1_addition_check_hide_condition():  #桌面没有未最小化的窗口    
                     #控制参数为True，且windows状态为未隐藏
                     if self.control_param['hide_cursor'] and not self.__windows_controler.windows_states['if_cursor_hidden']:
                         print('隐藏鼠标')
@@ -240,9 +247,11 @@ class Hider():     #交互界面与底层实现的中间层，(bug管理器)
                     print('似乎干了什么又什么都没干',self.control_param['hide_cursor'],not self.__windows_controler.windows_states['if_cursor_hidden'],
                         self.control_param['hide_taskbar'],not self.__windows_controler.windows_states['if_taskbar_hidden'],
                         self.control_param['hide_iconbar'],not self.__windows_controler.windows_states['if_iconbar_hidden'])
-            if time.time()-self.__threadings['talk_1_time_last'] < self.config_param['WAITING_TIME']:   #一动鼠标键盘且屏幕是隐藏图标状态就显示图标
-                self.__threadings['talk_1_first_check2hide'] = True
                 
+            if time.time()-self.__threadings['talk_1_time_last'] < self.config_param['WAITING_TIME']:   #一动鼠标键盘且屏幕是隐藏图标状态就显示图标
+                self.__threadings['talk_1_state'] = 'unhiding'
+                self.__threadings['talk_1_first_check2hide'] = True
+                             
                 if self.__windows_controler.windows_states['if_cursor_hidden']:
                     print('显示鼠标')
                     self.__windows_controler.unhide_cursor()  #显示鼠标
@@ -254,10 +263,15 @@ class Hider():     #交互界面与底层实现的中间层，(bug管理器)
                     self.__windows_controler.unhide_iconbar()  #显示桌面图标
                 if self.__windows_controler.windows_states['if_windows_hidden'] and self.control_param['hide_windows']:
                     print('显示窗口')
-                    self.__windows_controler.unhide_windows()
-                print('EEE',self.__windows_controler.windows_states['if_cursor_hidden'],self.__windows_controler.windows_states['if_taskbar_hidden'],self.__windows_controler.windows_states['if_iconbar_hidden'])
+                    self.__windows_controler.unhide_windows() #显示窗口     
+
+                print('EEE',self.__windows_controler.windows_states['if_cursor_hidden'],
+                      self.__windows_controler.windows_states['if_taskbar_hidden'],
+                      self.__windows_controler.windows_states['if_iconbar_hidden'],
+                      self.__windows_controler.windows_states['if_windows_hidden'])
                 self.__windows_controler.updata_windows_states()   #更新windows状态
 
+            self.__threadings['talk_1_state'] = 'checking'
             time.sleep(0.2)   #不确定不加会不会浪费电脑资源
 
         self.listener_1.stop()     #这个线程自带stop函数，不用其它退出设计
@@ -278,15 +292,16 @@ class windowsControler():    #自定义windows的底层实现, (bug生成器)
         
         self._hwnd_windows_dict = {'windows_exist':[],
                                     'unminimized_windows':[],
-                                    'ignored_windows':[]   #忽略的窗口
+                                    'ignored_windows':[],   #忽略的窗口
+                                    'keyboard_Controller':keyboard.Controller(),
                                     }   #用来存储窗口句柄和窗口名的字典
 
     def updata_windows_states(self):    #更新windows的状态，用来检测当前windows的状态，防止重复操作
         self.windows_states['if_taskbar_hidden'] = not win32gui.IsWindowVisible(self.__hwnd_taskbar)   #这里的not是因为win32gui.IsWindowVisible(self.__hwnd_taskbar)返回的是0或1，而self.windows_states['if_taskbar_hidden']需要的是True或False
         self.windows_states['if_iconbar_hidden'] = not win32gui.IsWindowVisible(self.__hwnd_iconbar)   #IsWindowVisible，如果窗口可见返回True，否则返回False
         self.windows_states['if_cursor_hidden'] = bool(win32gui.IsWindow(self.__hwnd_cursorhider))  #注意这个是反的,如果窗口存在，则鼠标被隐藏（因该吧）
-        self.windows_states['if_windows_hidden'] = bool(len(self._hwnd_windows_dict['unminimized_windows']) >= 1)   #如果有窗口存在，则为True                        
-                                    
+        self.windows_states['if_windows_hidden'] = bool(len(self.__tool_hide_windows_get_unhide_windows()) == 0)   #如果有未最小化的窗口存在，则为False                    
+                                      
     def hide_cursor(self):
         self.__hwnd_cursorhider = win32gui.CreateWindowEx(win32con.WS_EX_TOPMOST | win32con.WS_EX_TOOLWINDOW,
                             "Static",
@@ -336,34 +351,54 @@ class windowsControler():    #自定义windows的底层实现, (bug生成器)
     def unhide_iconbar(self):
         return bool(win32gui.ShowWindow(self.__hwnd_iconbar,1))
 
-    def tool_hide_windows_GetWindows_enum_windows_callback(self, hwnd, extra):
+    def __tool_hide_windows_GetWindows_enum_windows_callback(self, hwnd, extra):
         # 获取窗口标题
         window_text = win32gui.GetWindowText(hwnd)
         # 判断窗口是否可见
         if win32gui.IsWindowVisible(hwnd):
             # 判断窗口是否最小化
             if (window_text != "") and (window_text not in self._hwnd_windows_dict['ignored_windows']):
+                # if hasattr(self, '__hwnd_cursorhider') and hwnd == self.__hwnd_cursorhider:  #如果是隐藏鼠标的窗口就不返回,似乎检查不到
+                #     return
                 placement = win32gui.GetWindowPlacement(hwnd)
                 if win32gui.IsIconic(hwnd):
                     extra.append({"title": window_text, "hwnd": hwnd, "minimized": True, "placement": placement})
                 else:
                     extra.append({"title": window_text, "hwnd": hwnd, "minimized": False, "placement": placement})
         
-    def hide_windows(self):
+    def __tool_hide_windows_get_unhide_windows(self):
         #更新当前窗口模块 self._hwnd_windows_dict['windows_exist']
-        win32gui.EnumWindows(self.tool_hide_windows_GetWindows_enum_windows_callback, self._hwnd_windows_dict['windows_exist'])
+        self._hwnd_windows_dict['windows_exist'] = []
+        win32gui.EnumWindows(self.__tool_hide_windows_GetWindows_enum_windows_callback, self._hwnd_windows_dict['windows_exist'])
         # 记录未最小化的窗口
         self._hwnd_windows_dict['unminimized_windows'] = [window for window in self._hwnd_windows_dict['windows_exist'] if not window['minimized']]
-        # 最小化未最小化的窗口
-        #print(self._hwnd_windows_dict['unminimized_windows'])
-        for window in self._hwnd_windows_dict['unminimized_windows']:
-            win32gui.ShowWindow(window['hwnd'], win32con.SW_MINIMIZE)
+        return self._hwnd_windows_dict['unminimized_windows']
+     
+    def hide_windows(self):
+        keyboard_Controller = self._hwnd_windows_dict['keyboard_Controller']  #键盘模拟操作对象
+        keyboard_Controller.press(keyboard.Key.cmd)
+        time.sleep(0.1)
+        # 按下D键
+        keyboard_Controller.press('d')
+        time.sleep(0.1)
+        # 释放D键
+        keyboard_Controller.release('d')
+        time.sleep(0.1)
+        # 释放Win键
+        keyboard_Controller.release(keyboard.Key.cmd)
 
     def unhide_windows(self):
-        # 还原未最小化的窗口
-        for window in reversed(self._hwnd_windows_dict['unminimized_windows']):  #! 按顺序还原窗口，不确定是否正确
-            win32gui.SetWindowPlacement(window['hwnd'], window['placement'])
-        self._hwnd_windows_dict['unminimized_windows'] = []  #清理缓存
+        keyboard_Controller = self._hwnd_windows_dict['keyboard_Controller']
+        keyboard_Controller.press(keyboard.Key.cmd)
+        time.sleep(0.1)
+        # 按下D键
+        keyboard_Controller.press('d')
+        time.sleep(0.1)
+        # 释放D键
+        keyboard_Controller.release('d')
+        time.sleep(0.1)
+        # 释放Win键
+        keyboard_Controller.release(keyboard.Key.cmd)
 
 class Logger():
     class TeeStream:

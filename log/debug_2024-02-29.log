@@ -1,0 +1,30 @@
+2024-02-29 15:38:42,192 - mylogger_debug - DEBUG - 即将进行的操作,隐藏窗口:True,是否满足桌面窗口都最小化(如果没有则不执行前面的步骤):False,隐藏鼠标:True,隐藏任务栏:True,隐藏图标栏:True,
+     当前windows状态{'if_taskbar_hidden': False, 'if_iconbar_hidden': False, 'if_cursor_hidden': False, 'if_windows_hidden': False} - ()
+2024-02-29 15:41:02,454 - mylogger_debug - DEBUG - 即将进行的操作,隐藏窗口:True,是否满足桌面窗口都最小化(如果没有则不执行前面的步骤):False,隐藏鼠标:True,隐藏任务栏:True,隐藏图标栏:True,
+     当前windows状态{'if_taskbar_hidden': False, 'if_iconbar_hidden': False, 'if_cursor_hidden': False, 'if_windows_hidden': False} - ()
+2024-02-29 15:42:30,839 - mylogger_debug - DEBUG - 即将进行的操作,隐藏窗口:True,是否满足桌面窗口都最小化(如果没有则不执行前面的步骤):False,隐藏鼠标:True,隐藏任务栏:True,隐藏图标栏:True,
+     当前windows状态{'if_taskbar_hidden': False, 'if_iconbar_hidden': False, 'if_cursor_hidden': False, 'if_windows_hidden': False} - ()
+2024-02-29 15:43:42,504 - mylogger_debug - DEBUG - 即将进行的操作,隐藏窗口:True,是否满足桌面窗口都最小化(如果没有则不执行前面的步骤):False,隐藏鼠标:True,隐藏任务栏:True,隐藏图标栏:True,
+     当前windows状态{'if_taskbar_hidden': False, 'if_iconbar_hidden': False, 'if_cursor_hidden': False, 'if_windows_hidden': False} - ()
+2024-02-29 15:44:23,403 - mylogger_debug - DEBUG - 即将进行的操作,隐藏窗口:True,是否满足桌面窗口都最小化(如果没有则不执行前面的步骤):False,隐藏鼠标:True,隐藏任务栏:True,隐藏图标栏:True,
+     当前windows状态{'if_taskbar_hidden': False, 'if_iconbar_hidden': False, 'if_cursor_hidden': False, 'if_windows_hidden': False} - ()
+2024-02-29 15:44:53,865 - mylogger_debug - DEBUG - 即将进行的操作,隐藏窗口:True,是否满足桌面窗口都最小化(如果没有则不执行前面的步骤):False,隐藏鼠标:True,隐藏任务栏:True,隐藏图标栏:True,
+     当前windows状态{'if_taskbar_hidden': False, 'if_iconbar_hidden': False, 'if_cursor_hidden': False, 'if_windows_hidden': False} - ()
+2024-02-29 16:03:54,157 - mylogger_debug - DEBUG - 即将进行的操作,隐藏窗口:True,是否满足桌面窗口都最小化(如果没有则不执行前面的步骤):False,隐藏鼠标:True,隐藏任务栏:True,隐藏图标栏:True,
+     当前windows状态{'if_taskbar_hidden': False, 'if_iconbar_hidden': False, 'if_cursor_hidden': False, 'if_windows_hidden': False} - ()
+2024-02-29 16:05:35,319 - mylogger_debug - DEBUG - 即将进行的操作,隐藏窗口:True,是否满足桌面窗口都最小化(如果没有则不执行前面的步骤):False,隐藏鼠标:True,隐藏任务栏:True,隐藏图标栏:True,
+     当前windows状态{'if_taskbar_hidden': False, 'if_iconbar_hidden': False, 'if_cursor_hidden': False, 'if_windows_hidden': False} - ()
+2024-02-29 16:12:25,148 - mylogger_debug - DEBUG - 即将进行的操作,隐藏窗口:True,是否满足桌面窗口都最小化(如果没有则不执行前面的步骤):False,隐藏鼠标:True,隐藏任务栏:True,隐藏图标栏:True,
+     当前windows状态{'if_taskbar_hidden': False, 'if_iconbar_hidden': False, 'if_cursor_hidden': False, 'if_windows_hidden': False} - ()
+2024-02-29 16:19:50,141 - mylogger_debug - DEBUG - 即将进行的操作,隐藏窗口:True,是否满足桌面窗口都最小化(如果没有则不执行前面的步骤):False,隐藏鼠标:True,隐藏任务栏:True,隐藏图标栏:True,
+     当前windows状态{'if_taskbar_hidden': False, 'if_iconbar_hidden': False, 'if_cursor_hidden': False, 'if_windows_hidden': False} - ()
+2024-02-29 16:20:23,040 - mylogger_debug - DEBUG - 即将进行的操作,隐藏窗口:True,是否满足桌面窗口都最小化(如果没有则不执行前面的步骤):False,隐藏鼠标:True,隐藏任务栏:True,隐藏图标栏:True,
+     当前windows状态{'if_taskbar_hidden': False, 'if_iconbar_hidden': False, 'if_cursor_hidden': False, 'if_windows_hidden': False} - ()
+2024-02-29 16:20:46,395 - mylogger_debug - DEBUG - 即将进行的操作,隐藏窗口:True,是否满足桌面窗口都最小化(如果没有则不执行前面的步骤):False,隐藏鼠标:True,隐藏任务栏:True,隐藏图标栏:True,
+     当前windows状态{'if_taskbar_hidden': False, 'if_iconbar_hidden': False, 'if_cursor_hidden': False, 'if_windows_hidden': False} - ()
+2024-02-29 16:21:06,128 - mylogger_debug - DEBUG - 即将进行的操作,隐藏窗口:True,是否满足桌面窗口都最小化(如果没有则不执行前面的步骤):False,隐藏鼠标:True,隐藏任务栏:True,隐藏图标栏:True,
+     当前windows状态{'if_taskbar_hidden': False, 'if_iconbar_hidden': False, 'if_cursor_hidden': False, 'if_windows_hidden': False} - ()
+2024-02-29 16:22:33,832 - mylogger_debug - DEBUG - 即将进行的操作,隐藏窗口:True,是否满足桌面窗口都最小化(如果没有则不执行前面的步骤):False,隐藏鼠标:True,隐藏任务栏:True,隐藏图标栏:True,
+     当前windows状态{'if_taskbar_hidden': False, 'if_iconbar_hidden': False, 'if_cursor_hidden': False, 'if_windows_hidden': False} - ()
+2024-02-29 16:22:51,109 - mylogger_debug - DEBUG - 即将进行的操作,隐藏窗口:True,是否满足桌面窗口都最小化(如果没有则不执行前面的步骤):False,隐藏鼠标:True,隐藏任务栏:True,隐藏图标栏:True,
+     当前windows状态{'if_taskbar_hidden': False, 'if_iconbar_hidden': False, 'if_cursor_hidden': False, 'if_windows_hidden': False} - ()
