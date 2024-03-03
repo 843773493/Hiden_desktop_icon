@@ -294,13 +294,14 @@ class windowsControler():    #自定义windows的底层实现, (bug生成器)
                                     'unminimized_windows':[],
                                     'ignored_windows':[],   #忽略的窗口
                                     'keyboard_Controller':keyboard.Controller(),
+                                    'hiding_state':False,
                                     }   #用来存储窗口句柄和窗口名的字典
 
     def updata_windows_states(self):    #更新windows的状态，用来检测当前windows的状态，防止重复操作
         self.windows_states['if_taskbar_hidden'] = not win32gui.IsWindowVisible(self.__hwnd_taskbar)   #这里的not是因为win32gui.IsWindowVisible(self.__hwnd_taskbar)返回的是0或1，而self.windows_states['if_taskbar_hidden']需要的是True或False
         self.windows_states['if_iconbar_hidden'] = not win32gui.IsWindowVisible(self.__hwnd_iconbar)   #IsWindowVisible，如果窗口可见返回True，否则返回False
         self.windows_states['if_cursor_hidden'] = bool(win32gui.IsWindow(self.__hwnd_cursorhider))  #注意这个是反的,如果窗口存在，则鼠标被隐藏（因该吧）
-        self.windows_states['if_windows_hidden'] = bool(len(self.__tool_hide_windows_get_unhide_windows()) == 0)   #如果有未最小化的窗口存在，则为False                    
+        self.windows_states['if_windows_hidden'] = bool((len(self.__tool_hide_windows_get_unhide_windows()) == 0) or (self._hwnd_windows_dict['hiding_state'] == True))   #如果有未最小化的窗口存在，则为False                    
                                       
     def hide_cursor(self):
         self.__hwnd_cursorhider = win32gui.CreateWindowEx(win32con.WS_EX_TOPMOST | win32con.WS_EX_TOOLWINDOW,
@@ -386,6 +387,7 @@ class windowsControler():    #自定义windows的底层实现, (bug生成器)
         time.sleep(0.1)
         # 释放Win键
         keyboard_Controller.release(keyboard.Key.cmd)
+        self._hwnd_windows_dict['hiding_state'] = True
 
     def unhide_windows(self):
         keyboard_Controller = self._hwnd_windows_dict['keyboard_Controller']
@@ -399,6 +401,7 @@ class windowsControler():    #自定义windows的底层实现, (bug生成器)
         time.sleep(0.1)
         # 释放Win键
         keyboard_Controller.release(keyboard.Key.cmd)
+        self._hwnd_windows_dict['hiding_state'] = False
 
 class Logger():
     class TeeStream:
